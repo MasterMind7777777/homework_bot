@@ -86,8 +86,8 @@ def parse_status(homework):
     if homework_status not in HOMEWORK_STATUSES:
         raise ValueError(f'Неизвестный статус {homework_status}')
 
-    return (f'Изменился статус проверки работы'
-            f'"{homework_name}". {HOMEWORK_STATUSES[homework_status]}')
+    return (f'Изменился статус проверки работы "{homework_name}"'
+            f'. {HOMEWORK_STATUSES[homework_status]}')
 
 
 def check_tokens():
