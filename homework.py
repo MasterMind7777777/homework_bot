@@ -6,10 +6,9 @@ import sys
 import requests
 
 import telegram
-from telegram.ext import CommandHandler, Updater
 
 
-from dotenv import load_dotenv 
+from dotenv import load_dotenv
 load_dotenv()
 
 
@@ -40,6 +39,7 @@ logging.basicConfig(
     level=logging.DEBUG)
 logging.getLogger(__name__)
 
+
 def send_message(bot, message):
     """Отправка сообщения"""
 
@@ -55,8 +55,9 @@ def get_api_answer(current_timestamp):
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
 
-    try: 
-        homework_statuses = requests.get(ENDPOINT, headers=HEADERS, params=params)
+    try:
+        homework_statuses = requests.get(
+            ENDPOINT, headers=HEADERS, params=params)
 
         if homework_statuses.status_code != 200:
             raise Exception('Не верный status code запроса')
@@ -70,7 +71,7 @@ def get_api_answer(current_timestamp):
 def check_response(response):
     """Проверка коректности ответа сервера"""
 
-    if isinstance(response, dict): 
+    if isinstance(response, dict):
         if 'homeworks' not in response:
             raise KeyError('В ответе отсутствует homeworks')
 
@@ -87,12 +88,13 @@ def parse_status(homework):
     if homework_status not in HOMEWORK_STATUSES:
         raise ValueError(f'Неизвестный статус {homework_status}')
 
-    return f'Изменился статус проверки работы "{homework_name}". {HOMEWORK_STATUSES[homework_status]}'
+    return (f'Изменился статус проверки работы'
+            f'"{homework_name}". {HOMEWORK_STATUSES[homework_status]}')
 
 
 def check_tokens():
     """Проверка наличия переменных окружения"""
-    
+
     tokens = [
         [TELEGRAM_TOKEN, None, TOKEN_ERRORS[0]],
         [TELEGRAM_CHAT_ID, None, TOKEN_ERRORS[1]],
@@ -114,8 +116,8 @@ def main():
         logging.critical(f'Не хватает переменной окружения! {error}')
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    current_timestamp = 0 # int(time.time())
-    
+    current_timestamp = int(time.time())
+
     while True:
         try:
             response = get_api_answer(current_timestamp)
@@ -134,7 +136,6 @@ def main():
             if current_error != message:
                 send_message(bot, message)
             time.sleep(30)
-
 
 
 if __name__ == '__main__':
