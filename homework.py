@@ -41,8 +41,7 @@ logging.getLogger(__name__)
 
 
 def send_message(bot, message):
-    """Отправка сообщения"""
-
+    """Отправка сообщения."""
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logging.info('Сообщение успешно отправлено.')
@@ -51,7 +50,7 @@ def send_message(bot, message):
 
 
 def get_api_answer(current_timestamp):
-    """Отправка запроса к api"""
+    """Отправка запроса к api."""
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
 
@@ -69,8 +68,7 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
-    """Проверка коректности ответа сервера"""
-
+    """Проверка коректности ответа сервера."""
     if isinstance(response, dict):
         if 'homeworks' not in response:
             raise KeyError('В ответе отсутствует homeworks')
@@ -81,7 +79,7 @@ def check_response(response):
 
 
 def parse_status(homework):
-    """Получение статуса домашки """
+    """Получение статуса домашки."""
     homework_name = homework['homework_name']
     homework_status = homework['status']
 
@@ -93,8 +91,7 @@ def parse_status(homework):
 
 
 def check_tokens():
-    """Проверка наличия переменных окружения"""
-
+    """Проверка наличия переменных окружения."""
     tokens = [
         [TELEGRAM_TOKEN, None, TOKEN_ERRORS[0]],
         [TELEGRAM_CHAT_ID, None, TOKEN_ERRORS[1]],
@@ -109,7 +106,6 @@ def check_tokens():
 
 def main():
     """Основная логика работы бота."""
-
     try:
         check_tokens()
     except Exception as error:
