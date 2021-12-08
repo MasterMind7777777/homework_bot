@@ -82,7 +82,7 @@ def parse_status(homework):
     homework_status = homework.get('status')
 
     if homework_status not in HOMEWORK_STATUSES:
-        raise ValueError(f'Неизвестный статус {homework_status}')
+        return ('Нет работ с проверки')
 
     return (f'Изменился статус проверки работы "{homework_name}"'
             f'. {HOMEWORK_STATUSES[homework_status]}')
