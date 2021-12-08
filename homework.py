@@ -2,13 +2,11 @@ import os
 import time
 import logging
 import sys
-
 import requests
-
 import telegram
-
-
+from requests import RequestException
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
@@ -62,16 +60,16 @@ def get_api_answer(current_timestamp):
             raise Exception('Не верный status code запроса')
         return homework_statuses.json()
 
-    except Exception as error:
+    except RequestException as error:
         logging.error(error)
-        raise Exception('Что пошло не так при получении ответа от сервера')
+        raise RequestException(
+            'Что пошло не так при получении ответа от сервера')
 
 
 def check_response(response):
     """Проверка коректности ответа сервера."""
-    if isinstance(response, dict):
-        if 'homeworks' not in response:
-            raise KeyError('В ответе отсутствует homeworks')
+    if isinstance(response, dict) and ('homeworks' not in response):
+        raise KeyError('В ответе отсутствует homeworks')
 
     if not isinstance(response['homeworks'], list):
         raise TypeError('Ответ не представлен в виде списка')
@@ -80,8 +78,8 @@ def check_response(response):
 
 def parse_status(homework):
     """Получение статуса домашки."""
-    homework_name = homework['homework_name']
-    homework_status = homework['status']
+    homework_name = homework.get('homework_name')
+    homework_status = homework.get('status')
 
     if homework_status not in HOMEWORK_STATUSES:
         raise ValueError(f'Неизвестный статус {homework_status}')
@@ -117,7 +115,7 @@ def main():
     while True:
         try:
             response = get_api_answer(current_timestamp)
-            print(response)
+            logging.info(response)
             message = parse_status(check_response(response))
             send_message(bot, message)
             current_timestamp = response.get(
